@@ -45,6 +45,7 @@
         width: 148px; height: 148px;
         transform-origin: center bottom;
         z-index: 3;
+        pointer-events: auto;
       }
       #sprite {
         width: 100%; height: 100%;
@@ -55,11 +56,12 @@
       #bar {
         position: fixed; left: 10px; right: 10px;
         bottom: calc(10px + var(--safe-b));
-        z-index: 5; display: flex; gap: 6px; overflow-x: auto;
+        z-index: 20; display: flex; gap: 6px; overflow-x: auto;
         padding: 8px; border-radius: 18px;
-        background: rgba(16, 28, 18, .72);
+        background: rgba(16, 28, 18, .88);
         backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
         -webkit-overflow-scrolling: touch;
+        pointer-events: auto;
       }
       #bar button {
         flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0;
@@ -86,7 +88,7 @@
     <div id="pet">
       <img id="sprite" alt="Deskpet" />
     </div>
-    <p id="hint">Drag him. Tap to jump. Buttons along the bottom.</p>
+    <p id="hint">Deskpet · Sit and Sleep stay put. Drag him. Tap to jump.</p>
     <p id="add">Share → Add to Home Screen for a full-screen pet</p>
     <nav id="bar" aria-label="Deskpet">
       <button type="button" data-mode="walk" class="on">Walk</button>
@@ -131,7 +133,11 @@
 
   function viewW() { return Math.max(window.innerWidth, document.documentElement.clientWidth, 320); }
   function viewH() { return Math.max(window.innerHeight, document.documentElement.clientHeight, 480); }
-  function dock() { return 88 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--safe-b")) || 0); }
+  function dock() {
+    var bar = document.getElementById("bar");
+    var h = bar ? bar.offsetHeight : 56;
+    return h + 24 + (window.visualViewport ? 0 : 0);
+  }
   function maxX() { return Math.max(8, viewW() - size); }
   function maxY() { return Math.max(8, viewH() - size - dock()); }
   function ground() { return maxY(); }
@@ -195,6 +201,16 @@
     if (!last) last = now;
     var dt = Math.min(0.05, (now - last) / 1000);
     last = now;
+
+    if (mode === "sit" || mode === "sleep") {
+      jumping = 0;
+      anim = mode;
+      phase += dt * 0.6;
+      layout();
+      requestAnimationFrame(tick);
+      return;
+    }
+
     phase += dt * (anim === "run" ? 8.5 : anim === "dance" ? 7 : 5.6);
     frameT += dt;
     var fps = anim === "walk" || anim === "run" ? 8 : anim === "dance" ? 4 : 2;
@@ -229,10 +245,6 @@
           x += (dx / dist) * sp;
           y += (dy / dist) * sp;
         } else anim = "idle";
-      } else if (mode === "sit") {
-        anim = "sit";
-      } else if (mode === "sleep") {
-        anim = "sleep";
       } else if (mode === "dance") anim = "dance";
     }
 
@@ -245,12 +257,13 @@
   var drag = { dx: 0, dy: 0, moved: false };
   function down(ev) {
     ev.preventDefault();
+    ev.stopPropagation();
     held = true;
     drag.moved = false;
     var t = ev.touches ? ev.touches[0] : ev;
     drag.dx = t.clientX - x;
     drag.dy = t.clientY - y;
-    anim = "idle";
+    if (mode !== "sit" && mode !== "sleep") anim = "idle";
   }
   function move(ev) {
     var t = ev.touches ? ev.touches[0] : ev;
@@ -265,15 +278,20 @@
   function up(ev) {
     if (!held) return;
     held = false;
+    if (mode === "sit" || mode === "sleep") {
+      layout();
+      return;
+    }
     if (!drag.moved) jump();
     else if (mode === "walk" || mode === "run") y = ground();
   }
   petEl.addEventListener("touchstart", down, { passive: false });
   petEl.addEventListener("mousedown", down);
-  window.addEventListener("touchmove", move, { passive: false });
-  window.addEventListener("mousemove", move);
-  window.addEventListener("touchend", up);
-  window.addEventListener("mouseup", up);
+  petEl.addEventListener("touchmove", move, { passive: false });
+  petEl.addEventListener("mousemove", move);
+  petEl.addEventListener("touchend", up);
+  petEl.addEventListener("mouseup", up);
+  petEl.addEventListener("mouseleave", up);
 
   var btns = document.querySelectorAll("[data-mode]");
   for (var i = 0; i < btns.length; i++) {
@@ -291,7 +309,13 @@
     im.src = petSrc(n);
   });
 
-  window.addEventListener("resize", function () {
+  window.addEventListener("touchmove", function (ev) {
+    var t = ev.touches && ev.touches[0];
+    if (t) { finger.x = t.clientX; finger.y = t.clientY; }
+  }, { passive: true });
+  window.addEventListener("mousemove", function (ev) {
+    finger.x = ev.clientX; finger.y = ev.clientY;
+  });
     x = Math.max(0, Math.min(maxX(), x));
     if (mode === "walk" || mode === "run") y = ground();
     layout();
