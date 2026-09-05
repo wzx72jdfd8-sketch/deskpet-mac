@@ -165,17 +165,23 @@
   function setMode(next) {
     mode = next;
     jumping = 0;
+    sitT = 0;
     if (next === "walk" || next === "run") {
       anim = next;
       y = ground();
       vx = (facing > 0 ? 1 : -1) * (next === "run" ? 160 : 90);
-    } else if (next === "sit") anim = "sit";
-    else if (next === "sleep") anim = "sleep";
-    else if (next === "dance") anim = "dance";
+    } else if (next === "sit") {
+      anim = "sit";
+      sitT = 1e9;
+    } else if (next === "sleep") {
+      anim = "sleep";
+      sitT = 1e9;
+    } else if (next === "dance") anim = "dance";
     else if (next === "follow") anim = "walk";
     frame = 0;
     var btns = document.querySelectorAll("[data-mode]");
     for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("on", btns[i].getAttribute("data-mode") === mode);
+    layout();
   }
 
   function jump() {
@@ -208,8 +214,8 @@
         if (x > maxX()) { x = maxX(); vx = -Math.abs(vx); facing = -1; }
         think -= dt;
         if (mode === "walk" && think <= 0) {
-          if (Math.random() < 0.12) { setMode("sit"); sitT = 3 + Math.random() * 3; }
-          else { think = 2 + Math.random() * 3; if (Math.random() < 0.12) jump(); }
+          think = 2 + Math.random() * 3;
+          if (Math.random() < 0.12) jump();
         }
       } else if (mode === "follow") {
         var tx = finger.x - size / 2, ty = finger.y - size * 0.7;
@@ -224,10 +230,10 @@
           y += (dy / dist) * sp;
         } else anim = "idle";
       } else if (mode === "sit") {
-        anim = "sit"; sitT -= dt;
-        if (sitT <= 0) setMode("walk");
-      } else if (mode === "sleep") anim = "sleep";
-      else if (mode === "dance") anim = "dance";
+        anim = "sit";
+      } else if (mode === "sleep") {
+        anim = "sleep";
+      } else if (mode === "dance") anim = "dance";
     }
 
     x = Math.max(0, Math.min(maxX(), x));
@@ -271,11 +277,19 @@
 
   var btns = document.querySelectorAll("[data-mode]");
   for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener("click", function (ev) {
+    btns[i].addEventListener("pointerdown", function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
       var m = ev.currentTarget.getAttribute("data-mode");
-      if (m === "jump") jump(); else setMode(m);
+      if (m === "jump") jump();
+      else setMode(m);
     });
   }
+
+  ["idle.png","walk-1.png","walk-2.png","walk-3.png","walk-4.png","run-1.png","sit.png","sleep.png","dance.png","jump.png"].forEach(function (n) {
+    var im = new Image();
+    im.src = petSrc(n);
+  });
 
   window.addEventListener("resize", function () {
     x = Math.max(0, Math.min(maxX(), x));
