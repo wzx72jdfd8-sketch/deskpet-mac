@@ -6,15 +6,24 @@
   var stage = document.getElementById("stage");
   var hint = document.getElementById("hint");
 
-  var walk = ["pet/walk-1.png", "pet/walk-2.png", "pet/walk-3.png", "pet/walk-4.png"];
+  var BASE = "./";
+  try {
+    if (document.currentScript && document.currentScript.src) {
+      BASE = document.currentScript.src.replace(/deskpet\.js(\?.*)?$/, "");
+    } else if (/htmlpreview|github\.io/.test(location.host)) {
+      BASE = "https://cdn.jsdelivr.net/gh/wzx72jdfd8-sketch/deskpet-mac@main/";
+    }
+  } catch (_e) {}
+
+  var walk = [BASE + "pet/walk-1.png", BASE + "pet/walk-2.png", BASE + "pet/walk-3.png", BASE + "pet/walk-4.png"];
   var frames = {
-    idle: ["pet/idle.png"],
+    idle: [BASE + "pet/idle.png"],
     walk: walk,
-    run: ["pet/run-1.png", walk[1], "pet/run-1.png", walk[3]],
-    sit: ["pet/sit.png"],
-    sleep: ["pet/sleep.png"],
-    dance: ["pet/dance.png", "pet/idle.png"],
-    jump: ["pet/jump.png"],
+    run: [BASE + "pet/run-1.png", walk[1], BASE + "pet/run-1.png", walk[3]],
+    sit: [BASE + "pet/sit.png"],
+    sleep: [BASE + "pet/sleep.png"],
+    dance: [BASE + "pet/dance.png", BASE + "pet/idle.png"],
+    jump: [BASE + "pet/jump.png"],
   };
 
   var mode = "walk";
