@@ -86,7 +86,7 @@
   <body>
     <div id="stage"></div>
     <div id="pet">
-      <img id="sprite" alt="Deskpet" />
+      <img id="sprite" alt="Deskpet" src="https://raw.githubusercontent.com/wzx72jdfd8-sketch/deskpet-mac/main/pet/idle.png" />
     </div>
     <p id="hint">Deskpet · Sit and Sleep stay put. Drag him. Tap to jump.</p>
     <p id="add">Share → Add to Home Screen for a full-screen pet</p>
@@ -102,15 +102,15 @@
     <script>
 (function () {
   var CDN = "https://cdn.jsdelivr.net/gh/wzx72jdfd8-sketch/deskpet-mac@af017df/pet/";
-  var localBase = "./pet/";
-  var useCdn = /htmlpreview|github\.io|rawgit|statically/i.test(location.host);
-  function petSrc(name) { return (useCdn ? CDN : localBase) + name; }
+  var RAW = "https://raw.githubusercontent.com/wzx72jdfd8-sketch/deskpet-mac/main/pet/";
+  function petSrc(name) { return RAW + name; }
 
   var petEl = document.getElementById("pet");
   var sprite = document.getElementById("sprite");
   var hint = document.getElementById("hint");
   sprite.onerror = function () {
-    if (sprite.src.indexOf(CDN) < 0) sprite.src = CDN + (sprite.getAttribute("data-name") || "idle.png");
+    var name = sprite.getAttribute("data-name") || "idle.png";
+    if (sprite.src.indexOf("jsdelivr") < 0) sprite.src = CDN + name;
   };
 
   var walk = ["walk-1.png", "walk-2.png", "walk-3.png", "walk-4.png"];
