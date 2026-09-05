@@ -1,0 +1,16 @@
+{
+  "name": "Deskpet",
+  "short_name": "Deskpet",
+  "description": "A penguin that walks around your phone screen",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#2f6b3a",
+  "theme_color": "#2f6b3a",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
