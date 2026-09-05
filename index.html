@@ -22,133 +22,69 @@
         --safe-b: env(safe-area-inset-bottom, 0px);
         --safe-t: env(safe-area-inset-top, 0px);
       }
-      * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-        touch-action: none;
-      }
-      html,
-      body {
-        margin: 0;
-        height: 100%;
-        background: var(--pitch);
-        color: var(--ink);
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-        overflow: hidden;
-        overscroll-behavior: none;
-        user-select: none;
-        -webkit-user-select: none;
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      html, body {
+        margin: 0; height: 100%; height: 100dvh;
+        background: var(--pitch); color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        overflow: hidden; overscroll-behavior: none;
+        user-select: none; -webkit-user-select: none;
       }
       #stage {
-        position: fixed;
-        inset: 0;
+        position: fixed; inset: 0;
         background:
-          linear-gradient(180deg, rgba(0, 0, 0, 0.12), transparent 18%),
-          repeating-linear-gradient(
-            90deg,
-            #2f6b3a 0 48px,
-            #347441 48px 96px
-          );
+          linear-gradient(180deg, rgba(0,0,0,.12), transparent 18%),
+          repeating-linear-gradient(90deg, #2f6b3a 0 48px, #347441 48px 96px);
       }
       #stage::before {
-        content: "";
-        position: absolute;
-        inset: 12% 10% 22%;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        pointer-events: none;
-      }
-      #stage::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 12%;
-        bottom: 22%;
-        width: 2px;
-        margin-left: -1px;
-        background: var(--line);
-        pointer-events: none;
+        content: ""; position: absolute; inset: 12% 10% 22%;
+        border: 2px solid var(--line); border-radius: 8px; pointer-events: none;
       }
       #pet {
-        position: absolute;
-        left: 0;
-        top: 0;
-        will-change: transform;
+        position: absolute; left: 24px; top: auto; bottom: 96px;
+        width: 148px; height: 148px;
         transform-origin: center bottom;
+        z-index: 3;
       }
       #sprite {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        object-position: bottom center;
+        width: 100%; height: 100%;
+        object-fit: contain; object-position: bottom center;
         pointer-events: none;
-        filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.28));
+        filter: drop-shadow(0 10px 8px rgba(0,0,0,.28));
       }
       #bar {
-        position: fixed;
-        left: 10px;
-        right: 10px;
+        position: fixed; left: 10px; right: 10px;
         bottom: calc(10px + var(--safe-b));
-        z-index: 5;
-        display: flex;
-        gap: 6px;
-        overflow-x: auto;
-        padding: 8px;
-        border-radius: 18px;
-        background: rgba(16, 28, 18, 0.72);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        touch-action: pan-x;
+        z-index: 5; display: flex; gap: 6px; overflow-x: auto;
+        padding: 8px; border-radius: 18px;
+        background: rgba(16, 28, 18, .72);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
         -webkit-overflow-scrolling: touch;
       }
       #bar button {
-        flex: 0 0 auto;
-        min-height: 44px;
-        padding: 0 14px;
-        border: 0;
-        border-radius: 12px;
-        background: transparent;
-        color: var(--ink);
+        flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0;
+        border-radius: 12px; background: transparent; color: var(--ink);
         font: 600 14px/1 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-        touch-action: manipulation;
       }
-      #bar button.on {
-        background: #f4efe4;
-        color: #16341c;
-      }
+      #bar button.on { background: #f4efe4; color: #16341c; }
       #hint {
-        position: fixed;
-        top: calc(14px + var(--safe-t));
-        left: 16px;
-        right: 16px;
-        text-align: center;
-        font-size: 13px;
-        letter-spacing: 0.02em;
-        color: rgba(255, 255, 255, 0.88);
-        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
-        pointer-events: none;
-        transition: opacity 0.6s;
+        position: fixed; top: calc(14px + var(--safe-t));
+        left: 16px; right: 16px; text-align: center; font-size: 13px;
+        color: rgba(255,255,255,.9); text-shadow: 0 1px 8px rgba(0,0,0,.45);
+        pointer-events: none; z-index: 4; transition: opacity .6s;
       }
-      #hint.gone {
-        opacity: 0;
-      }
+      #hint.gone { opacity: 0; }
       #add {
-        position: fixed;
-        top: calc(44px + var(--safe-t));
-        left: 16px;
-        right: 16px;
-        text-align: center;
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-        pointer-events: none;
+        position: fixed; top: calc(44px + var(--safe-t));
+        left: 16px; right: 16px; text-align: center; font-size: 12px;
+        color: rgba(255,255,255,.7); pointer-events: none; z-index: 4;
       }
     </style>
   </head>
   <body>
-    <div id="stage">
-      <div id="pet">
-        <img id="sprite" src="https://cdn.jsdelivr.net/gh/wzx72jdfd8-sketch/deskpet-mac@af017df/pet/idle.png" alt="Deskpet" />
-      </div>
+    <div id="stage"></div>
+    <div id="pet">
+      <img id="sprite" alt="Deskpet" />
     </div>
     <p id="hint">Drag him. Tap to jump. Buttons along the bottom.</p>
     <p id="add">Share → Add to Home Screen for a full-screen pet</p>
@@ -161,6 +97,209 @@
       <button type="button" data-mode="dance">Dance</button>
       <button type="button" data-mode="jump">Jump</button>
     </nav>
-    <script src="https://cdn.jsdelivr.net/gh/wzx72jdfd8-sketch/deskpet-mac@af017df/deskpet.js"></script>
+    <script>
+(function () {
+  var CDN = "https://cdn.jsdelivr.net/gh/wzx72jdfd8-sketch/deskpet-mac@af017df/pet/";
+  var localBase = "./pet/";
+  var useCdn = /htmlpreview|github\.io|rawgit|statically/i.test(location.host);
+  function petSrc(name) { return (useCdn ? CDN : localBase) + name; }
+
+  var petEl = document.getElementById("pet");
+  var sprite = document.getElementById("sprite");
+  var hint = document.getElementById("hint");
+  sprite.onerror = function () {
+    if (sprite.src.indexOf(CDN) < 0) sprite.src = CDN + (sprite.getAttribute("data-name") || "idle.png");
+  };
+
+  var walk = ["walk-1.png", "walk-2.png", "walk-3.png", "walk-4.png"];
+  var frames = {
+    idle: ["idle.png"],
+    walk: walk,
+    run: ["run-1.png", "walk-2.png", "run-1.png", "walk-4.png"],
+    sit: ["sit.png"],
+    sleep: ["sleep.png"],
+    dance: ["dance.png", "idle.png"],
+    jump: ["jump.png"]
+  };
+
+  var mode = "walk", anim = "walk", facing = 1;
+  var x = 24, y = 0, vx = 90, size = 148;
+  var frame = 0, frameT = 0, phase = 0;
+  var held = false, jumping = 0, last = 0;
+  var finger = { x: 80, y: 200 };
+  var think = 1.5, sitT = 0, started = false;
+
+  function viewW() { return Math.max(window.innerWidth, document.documentElement.clientWidth, 320); }
+  function viewH() { return Math.max(window.innerHeight, document.documentElement.clientHeight, 480); }
+  function dock() { return 88 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--safe-b")) || 0); }
+  function maxX() { return Math.max(8, viewW() - size); }
+  function maxY() { return Math.max(8, viewH() - size - dock()); }
+  function ground() { return maxY(); }
+
+  function showFrame() {
+    var list = frames[anim] || frames.idle;
+    var name = list[frame % list.length];
+    var url = petSrc(name);
+    sprite.setAttribute("data-name", name);
+    if (sprite.getAttribute("src") !== url) sprite.src = url;
+  }
+
+  function layout() {
+    var bob = 0;
+    if (anim === "walk" || anim === "run") bob = Math.sin(phase * 2) * (anim === "run" ? 5 : 3);
+    else if (anim === "dance") bob = Math.abs(Math.sin(phase * 2)) * 10;
+    var jy = 0;
+    if (jumping > 0) {
+      var u = jumping;
+      jy = -110 * 4 * u * (1 - u);
+    }
+    petEl.style.left = "0px";
+    petEl.style.top = "0px";
+    petEl.style.bottom = "auto";
+    petEl.style.width = size + "px";
+    petEl.style.height = size + "px";
+    petEl.style.transform = "translate(" + Math.round(x) + "px," + Math.round(y + bob + jy) + "px) scaleX(" + facing + ")";
+    showFrame();
+  }
+
+  function setMode(next) {
+    mode = next;
+    jumping = 0;
+    if (next === "walk" || next === "run") {
+      anim = next;
+      y = ground();
+      vx = (facing > 0 ? 1 : -1) * (next === "run" ? 160 : 90);
+    } else if (next === "sit") anim = "sit";
+    else if (next === "sleep") anim = "sleep";
+    else if (next === "dance") anim = "dance";
+    else if (next === "follow") anim = "walk";
+    frame = 0;
+    var btns = document.querySelectorAll("[data-mode]");
+    for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("on", btns[i].getAttribute("data-mode") === mode);
+  }
+
+  function jump() {
+    if (held) return;
+    jumping = 0.01;
+    anim = "jump";
+    frame = 0;
+  }
+
+  function tick(now) {
+    if (!last) last = now;
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    phase += dt * (anim === "run" ? 8.5 : anim === "dance" ? 7 : 5.6);
+    frameT += dt;
+    var fps = anim === "walk" || anim === "run" ? 8 : anim === "dance" ? 4 : 2;
+    while (frameT >= 1 / fps) { frameT -= 1 / fps; frame++; }
+
+    if (jumping > 0) {
+      jumping += dt / 0.55;
+      if (jumping >= 1) {
+        jumping = 0;
+        anim = mode === "run" ? "run" : mode === "sit" ? "sit" : mode === "sleep" ? "sleep" : mode === "dance" ? "dance" : "walk";
+      }
+    } else if (!held) {
+      if (mode === "walk" || mode === "run") {
+        x += vx * dt;
+        y = ground();
+        if (x < 0) { x = 0; vx = Math.abs(vx); facing = 1; }
+        if (x > maxX()) { x = maxX(); vx = -Math.abs(vx); facing = -1; }
+        think -= dt;
+        if (mode === "walk" && think <= 0) {
+          if (Math.random() < 0.12) { setMode("sit"); sitT = 3 + Math.random() * 3; }
+          else { think = 2 + Math.random() * 3; if (Math.random() < 0.12) jump(); }
+        }
+      } else if (mode === "follow") {
+        var tx = finger.x - size / 2, ty = finger.y - size * 0.7;
+        var dx = tx - x, dy = ty - y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 8) {
+          anim = dist > 180 ? "run" : "walk";
+          facing = dx >= 0 ? 1 : -1;
+          var sp = (anim === "run" ? 220 : 130) * dt;
+          if (sp > dist) sp = dist;
+          x += (dx / dist) * sp;
+          y += (dy / dist) * sp;
+        } else anim = "idle";
+      } else if (mode === "sit") {
+        anim = "sit"; sitT -= dt;
+        if (sitT <= 0) setMode("walk");
+      } else if (mode === "sleep") anim = "sleep";
+      else if (mode === "dance") anim = "dance";
+    }
+
+    x = Math.max(0, Math.min(maxX(), x));
+    y = Math.max(0, Math.min(maxY(), y));
+    layout();
+    requestAnimationFrame(tick);
+  }
+
+  var drag = { dx: 0, dy: 0, moved: false };
+  function down(ev) {
+    ev.preventDefault();
+    held = true;
+    drag.moved = false;
+    var t = ev.touches ? ev.touches[0] : ev;
+    drag.dx = t.clientX - x;
+    drag.dy = t.clientY - y;
+    anim = "idle";
+  }
+  function move(ev) {
+    var t = ev.touches ? ev.touches[0] : ev;
+    finger.x = t.clientX; finger.y = t.clientY;
+    if (!held) return;
+    ev.preventDefault();
+    var nx = t.clientX - drag.dx, ny = t.clientY - drag.dy;
+    if (Math.abs(nx - x) + Math.abs(ny - y) > 4) drag.moved = true;
+    x = nx; y = ny;
+    layout();
+  }
+  function up(ev) {
+    if (!held) return;
+    held = false;
+    if (!drag.moved) jump();
+    else if (mode === "walk" || mode === "run") y = ground();
+  }
+  petEl.addEventListener("touchstart", down, { passive: false });
+  petEl.addEventListener("mousedown", down);
+  window.addEventListener("touchmove", move, { passive: false });
+  window.addEventListener("mousemove", move);
+  window.addEventListener("touchend", up);
+  window.addEventListener("mouseup", up);
+
+  var btns = document.querySelectorAll("[data-mode]");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener("click", function (ev) {
+      var m = ev.currentTarget.getAttribute("data-mode");
+      if (m === "jump") jump(); else setMode(m);
+    });
+  }
+
+  window.addEventListener("resize", function () {
+    x = Math.max(0, Math.min(maxX(), x));
+    if (mode === "walk" || mode === "run") y = ground();
+    layout();
+  });
+
+  function start() {
+    if (started) return;
+    started = true;
+    y = ground();
+    x = Math.min(40, maxX());
+    setMode("walk");
+    layout();
+    requestAnimationFrame(tick);
+    setTimeout(function () { if (hint) hint.classList.add("gone"); }, 4000);
+    var nav = window.navigator;
+    if (nav.standalone || window.matchMedia("(display-mode: standalone)").matches) {
+      var add = document.getElementById("add");
+      if (add) add.style.display = "none";
+    }
+  }
+  start();
+})();
+    </script>
   </body>
 </html>
