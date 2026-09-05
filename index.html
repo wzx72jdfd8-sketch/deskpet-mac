@@ -31,7 +31,7 @@
         user-select: none; -webkit-user-select: none;
       }
       #stage {
-        position: fixed; inset: 0;
+        position: fixed; inset: 0; z-index: 0; pointer-events: none;
         background:
           linear-gradient(180deg, rgba(0,0,0,.12), transparent 18%),
           repeating-linear-gradient(90deg, #2f6b3a 0 48px, #347441 48px 96px);
@@ -56,17 +56,20 @@
       #bar {
         position: fixed; left: 10px; right: 10px;
         bottom: calc(10px + var(--safe-b));
-        z-index: 20; display: flex; gap: 6px; overflow-x: auto;
+        z-index: 20; display: flex; flex-wrap: wrap; gap: 6px;
+        justify-content: center;
+        overflow: visible;
         padding: 8px; border-radius: 18px;
         background: rgba(16, 28, 18, .88);
         backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-        -webkit-overflow-scrolling: touch;
         pointer-events: auto;
       }
       #bar button {
-        flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0;
+        flex: 0 0 auto; min-height: 44px; min-width: 56px; padding: 0 14px; border: 0;
         border-radius: 12px; background: transparent; color: var(--ink);
         font: 600 14px/1 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        touch-action: manipulation;
+        cursor: pointer;
       }
       #bar button.on { background: #f4efe4; color: #16341c; }
       #hint {
@@ -91,16 +94,17 @@
     <p id="hint">Deskpet · Sit and Sleep stay put. Drag him. Tap to jump.</p>
     <p id="add">Share → Add to Home Screen for a full-screen pet</p>
     <nav id="bar" aria-label="Deskpet">
-      <button type="button" data-mode="walk" class="on">Walk</button>
-      <button type="button" data-mode="run">Run</button>
-      <button type="button" data-mode="follow">Follow</button>
-      <button type="button" data-mode="sit">Sit</button>
-      <button type="button" data-mode="sleep">Sleep</button>
-      <button type="button" data-mode="dance">Dance</button>
-      <button type="button" data-mode="jump">Jump</button>
+      <button type="button" data-mode="walk" class="on" onclick="Deskpet.go('walk')">Walk</button>
+      <button type="button" data-mode="run" onclick="Deskpet.go('run')">Run</button>
+      <button type="button" data-mode="follow" onclick="Deskpet.go('follow')">Follow</button>
+      <button type="button" data-mode="sit" onclick="Deskpet.go('sit')">Sit</button>
+      <button type="button" data-mode="sleep" onclick="Deskpet.go('sleep')">Sleep</button>
+      <button type="button" data-mode="dance" onclick="Deskpet.go('dance')">Dance</button>
+      <button type="button" data-mode="jump" onclick="Deskpet.go('jump')">Jump</button>
     </nav>
     <script>
 (function () {
+  window.Deskpet = { go: function () {} };
   var CDN = "https://cdn.jsdelivr.net/gh/wzx72jdfd8-sketch/deskpet-mac@af017df/pet/";
   var RAW = "https://raw.githubusercontent.com/wzx72jdfd8-sketch/deskpet-mac/main/pet/";
   function petSrc(name) { return RAW + name; }
@@ -293,15 +297,25 @@
   petEl.addEventListener("mouseup", up);
   petEl.addEventListener("mouseleave", up);
 
+  var lastGo = 0;
+  window.Deskpet.go = function (m) {
+    var now = Date.now();
+    if (now - lastGo < 280) return;
+    lastGo = now;
+    if (m === "jump") jump();
+    else setMode(m);
+  };
   var btns = document.querySelectorAll("[data-mode]");
   for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener("pointerdown", function (ev) {
+    btns[i].addEventListener("click", function (ev) {
+      ev.preventDefault();
+      window.Deskpet.go(ev.currentTarget.getAttribute("data-mode"));
+    });
+    btns[i].addEventListener("touchend", function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
-      var m = ev.currentTarget.getAttribute("data-mode");
-      if (m === "jump") jump();
-      else setMode(m);
-    });
+      window.Deskpet.go(ev.currentTarget.getAttribute("data-mode"));
+    }, { passive: false });
   }
 
   ["idle.png","walk-1.png","walk-2.png","walk-3.png","walk-4.png","run-1.png","sit.png","sleep.png","dance.png","jump.png"].forEach(function (n) {
